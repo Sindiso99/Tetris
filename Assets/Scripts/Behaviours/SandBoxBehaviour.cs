@@ -72,4 +72,28 @@ public class SandBoxBehaviour : MonoBehaviour
             }
     }
     
+    public void deleteAround(int xCoord, int yCoord)
+    {
+        
+        for (int x = -1; x < 2; x++)
+        {
+            int curX = xCoord + x;
+            if (curX > 0 && curX < borderWidth)
+            {
+                deleteColumn(curX, yCoord);
+            }
+        }
+    }
+
+    public void deleteColumn(int xCoord, int yCoord)
+    {
+        for (int y = yCoord; y < borderHeight && y - yCoord > -3 && y >= 0; y--)
+        {
+            if(cells[xCoord,y] != null)
+            {
+                Destroy(cells[xCoord, y].gameObject);
+                cells[xCoord, y] = null;
+            }
+        }
+    }
 }

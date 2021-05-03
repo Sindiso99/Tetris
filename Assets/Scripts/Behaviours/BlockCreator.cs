@@ -5,9 +5,13 @@ using UnityEngine;
 public class BlockCreator : MonoBehaviour
 {
     public GameObject[] blocks;
+    public GameObject nextBlock;
+    public int nextIndex;
+    
     // Start is called before the first frame update
     void Start()
     {
+        nextBlock = getRandomBlock();
         dropBlock();
     }
 
@@ -18,8 +22,17 @@ public class BlockCreator : MonoBehaviour
     }
     public void dropBlock()
     {
+        Instantiate(nextBlock,transform.position, Quaternion.identity);
+        nextBlock = getRandomBlock();
+        FindObjectOfType<NextBlock>().ShowNext(nextIndex);
+
+    }
+
+    public GameObject getRandomBlock()
+    {
         float randomBlock = Random.Range(0, 1f);
         randomBlock *= blocks.Length;
-        Instantiate(blocks[Mathf.FloorToInt(randomBlock)],transform.position, Quaternion.identity);
+        nextIndex = Mathf.FloorToInt(randomBlock);
+        return blocks[nextIndex];
     }
 }

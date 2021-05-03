@@ -334,6 +334,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8368500445683942631}
   - component: {fileID: 8368500445683942630}
+  - component: {fileID: 7839415801099581800}
+  - component: {fileID: -4440663801566680051}
   m_Layer: 0
   m_Name: L Piece Reversed
   m_TagString: Untagged
@@ -365,10 +367,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 8368500445683942625}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce797cad871841d4393c745ac9474f2a, type: 3}
+  m_Script: {fileID: 11500000, guid: e99d89634d447c14c9bafa14c264cd16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  falling: 1
   shape: {fileID: 8368500445882668363}
+--- !u!114 &7839415801099581800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368500445683942625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc81c9466086935499df7b86c5153ae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-4440663801566680051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368500445683942625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d7f2502de280845ae6472d649fee27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8368500445882668363
 GameObject:
   m_ObjectHideFlags: 0

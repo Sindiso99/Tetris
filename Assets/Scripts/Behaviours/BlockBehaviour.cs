@@ -2,22 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlockFall : MonoBehaviour
+public class BlockBehaviour : MonoBehaviour
 {
     protected  Vector3 leftVector = new Vector3(-1, 0, 0);
     protected  Vector3 rightVector = new Vector3(1, 0, 0);
     protected  Vector3 normalDownVector = new Vector3(0, -1, 0);
     protected  Vector3 upVector = new Vector3(0, 1, 0);
-    private  Vector3 rotation = new Vector3(0, 0, 90);
+    protected  Vector3 rotation = new Vector3(0, 0, 90);
     protected float rateOfFall = 0f;
-    protected bool falling = true;
+    public bool falling = true;
     public GameObject shape;
-    protected SandBoxBehaviour sandBoxBehaviour;
-
+    public SandBoxBehaviour sandBoxBehaviour;
+    private BlockCreator dropper;
+    protected InputReader _inputReader;
+    public CommandProcessor _commandProcessor;
 
     void Start()
     {
         sandBoxBehaviour = FindObjectOfType<SandBoxBehaviour>();
+        dropper = FindObjectOfType<BlockCreator>();
+        _inputReader = GetComponent<InputReader>();
+        _commandProcessor = GetComponent<CommandProcessor>();
     }
 
     // Update is called once per frame
@@ -26,7 +31,21 @@ public class BlockFall : MonoBehaviour
         if (falling)
         {
             rateOfFall += Time.deltaTime;
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            var direction = _inputReader.ReadInput();
+
+            if (direction == upVector)
+            {
+                rotate();
+            }
+            if (direction == leftVector)
+            {
+                shift(leftVector);
+            }
+            else if (direction == rightVector)
+            {
+                shift(rightVector);
+            }
+            if (direction == normalDownVector)
             {
                 fall();
             }
@@ -36,51 +55,42 @@ public class BlockFall : MonoBehaviour
             }
             //Object falls at a constant rate
 
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                shift(leftVector);
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                shift(rightVector);
-            }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                rotate(rotation);
-            }
+            
         }
         
     }
 
-    public void fall()
+    public virtual void fall()
     {
         gameObject.transform.Translate(normalDownVector);
         rateOfFall = 0f;
         if (!checkValidTransform())
         {
-            falling = false;
             gameObject.transform.Translate(upVector);
             addCells();
             sandBoxBehaviour.CheckRows();
-            FindObjectOfType<BlockCreator>().dropBlock();
+            dropper.dropBlock();
+            falling = false;
         }
     }
 
     public void shift(Vector3 direction)
     {
-        gameObject.transform.position += direction;
+        var moveCommand = new Shift(shape, direction);
+        _commandProcessor.ExecuteCommand(moveCommand);
         if (!checkValidTransform())
         {
-            gameObject.transform.position -= direction;
+            _commandProcessor.Undo();
         }
     }
 
-    public virtual void rotate(Vector3 degrees)
+    public virtual void rotate()
     {
-        shape.transform.Rotate(degrees);
+        var moveCommand= new Rotate(shape, rotation);
+        _commandProcessor.ExecuteCommand(moveCommand);
         if (!checkValidTransform())
         {
-            shape.transform.Rotate(degrees * -1);
+            _commandProcessor.Undo();
         }
     }
     public bool checkValidTransform()
@@ -112,4 +122,10 @@ public class BlockFall : MonoBehaviour
             SandBoxBehaviour.cells[Mathf.FloorToInt(block.transform.position.x), Mathf.FloorToInt(block.transform.position.y)] = block;
         }
     }
+
+    public bool isFalling()
+    {
+        return falling;
+    }
+
 }
