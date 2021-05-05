@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 public class RootMenu : MonoBehaviour
 {
     public static bool gamePaused = false;
-    public GameObject currentUI;
+    public GameObject pauseUI;
+    public GameObject resumeUI;
 
     void Update()
     {
@@ -17,6 +18,12 @@ public class RootMenu : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void StartTutorial()
+    {
+        SceneManager.LoadScene(2);
+    }
+
+
     public void CloseGame ()
     {
         Debug.Log("Scionara, Space Cowboy");
@@ -25,14 +32,16 @@ public class RootMenu : MonoBehaviour
 
     public void ResumeGame ()
     {
-        currentUI.SetActive(false);
+        pauseUI.SetActive(false);
+        resumeUI.SetActive(true);
         Time.timeScale = 1f;
         gamePaused = false;
     }
 
     public void PauseGame()
     {
-        currentUI.SetActive(true);
+        pauseUI.SetActive(true);
+        resumeUI.SetActive(false);
         Time.timeScale = 0f;
         gamePaused = true;
     }

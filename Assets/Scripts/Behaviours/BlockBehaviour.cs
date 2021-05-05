@@ -9,7 +9,9 @@ public class BlockBehaviour : MonoBehaviour
     protected  Vector3 normalDownVector = new Vector3(0, -1, 0);
     protected  Vector3 upVector = new Vector3(0, 1, 0);
     protected  Vector3 rotation = new Vector3(0, 0, 90);
+
     protected float rateOfFall = 0f;
+
     public bool falling = true;
     public GameObject shape;
     public SandBoxBehaviour sandBoxBehaviour;
@@ -30,7 +32,7 @@ public class BlockBehaviour : MonoBehaviour
     {
         if (falling)
         {
-            rateOfFall += Time.deltaTime;
+            rateOfFall += Time.deltaTime * PlayerPrefs.GetInt("difficulty");
             var direction = _inputReader.ReadInput();
 
             if (direction == upVector)
@@ -68,13 +70,11 @@ public class BlockBehaviour : MonoBehaviour
         {
             gameObject.transform.Translate(upVector);
             addCells();
-            sandBoxBehaviour.CheckRows();
-            dropper.dropBlock();
-            falling = false;
+            
         }
     }
 
-    public void shift(Vector3 direction)
+    public virtual void shift(Vector3 direction)
     {
         var moveCommand = new Shift(shape, direction);
         _commandProcessor.ExecuteCommand(moveCommand);
@@ -117,10 +117,12 @@ public class BlockBehaviour : MonoBehaviour
 
     public virtual void addCells()
     {
-        foreach (Transform block in shape.transform)
+        if (sandBoxBehaviour.AddCells(shape))
         {
-            SandBoxBehaviour.cells[Mathf.FloorToInt(block.transform.position.x), Mathf.FloorToInt(block.transform.position.y)] = block;
+            sandBoxBehaviour.CheckRows();
+            dropper.dropBlock();
         }
+        falling = false;
     }
 
     public bool isFalling()

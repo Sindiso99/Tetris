@@ -9,11 +9,13 @@ public class SandBoxBehaviour : MonoBehaviour
     public static int borderWidth = 20;
     public static int borderHeight = 14;
     public static Transform[,] cells = new Transform[borderWidth, borderHeight];
+    private ScoreTracker _scoreTracker;
+    private int deletedBlocks;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _scoreTracker = GetComponent<ScoreTracker>();
     }
 
     // Update is called once per frame
@@ -32,6 +34,7 @@ public class SandBoxBehaviour : MonoBehaviour
                 moveDown(i);
             }
         }
+        addToScore();
     }
 
     public void deleteRow(int i)
@@ -39,6 +42,7 @@ public class SandBoxBehaviour : MonoBehaviour
         for (int j = 0; j < borderWidth; j++)
         {
             Destroy(cells[j, i].gameObject);
+            deletedBlocks++;
             cells[j, i] = null;
         }
     }
@@ -83,6 +87,7 @@ public class SandBoxBehaviour : MonoBehaviour
                 deleteColumn(curX, yCoord);
             }
         }
+        addToScore();
     }
 
     public void deleteColumn(int xCoord, int yCoord)
@@ -92,8 +97,35 @@ public class SandBoxBehaviour : MonoBehaviour
             if(cells[xCoord,y] != null)
             {
                 Destroy(cells[xCoord, y].gameObject);
+                deletedBlocks++;
                 cells[xCoord, y] = null;
             }
         }
+    }
+
+    public void addToScore()
+    {
+        _scoreTracker.AddPoints(deletedBlocks);
+        deletedBlocks = 0;
+    }
+
+    public bool AddCells(GameObject shape)
+    {
+        foreach (Transform block in shape.transform)
+        {
+            int x = Mathf.FloorToInt(block.transform.position.x);
+            int y = Mathf.FloorToInt(block.transform.position.y);
+            if (cells[x, y] != null)
+            {
+                Destroy(FindObjectOfType<BlockCreator>());
+                _scoreTracker.EndGame();
+                return false;
+            }
+            else
+            {
+                cells[x, y] = block;
+            } 
+        }
+        return true;
     }
 }
